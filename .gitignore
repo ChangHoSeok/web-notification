@@ -1,0 +1,17 @@
+#################
+## Eclipse
+#################
+
+.project
+*.tmp
+*.bak
+*.swp
+*~.nib
+.classpath
+.settings/
+build/
+
+#################
+## Etc
+#################
+*.log
