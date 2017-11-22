@@ -21,7 +21,7 @@
 
 'use strict';
 
-const applicationServerPublicKey = 'BEkDZz9jTkgRAW0wYAr1Sjn9Twqp4jGJiDQfLZ362dR-XwJcuK4xslNSxtFYA_gXLxIVqCEMwn9EjMQLAtWmh1g';
+const applicationServerPublicKey = 'BL4xu-6iTVE-ZyaFxdFnHb7_bG3Py6HYeBcSthB8TWy3764_Ig3aewiiAvXCBUHOIHTWkUchfx5m1i4-8gQGRCA';
 const pushButton = document.querySelector('.js-push-btn');
 
 let isSubscribed = false;
@@ -89,9 +89,12 @@ function subscribeUser() {
 		applicationServerKey: applicationServerKey
 	}).then(function(subscription) {
 		console.log('User is subscribed:', subscription);
+		console.log('subscription.endpoint:', subscription.endpoint);
+		console.log('subscription key:', subscription.getKey('p256dh'));
+		console.log('subscription auth:', subscription.getKey('auth'));
 
 		updateSubscriptionOnServer(subscription);
-
+		
 		isSubscribed = true;
 
 		updateBtn();
