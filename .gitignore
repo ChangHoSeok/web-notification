@@ -7,6 +7,7 @@
 *.bak
 *.swp
 *~.nib
+rebel.xml
 .classpath
 .settings/
 build/
