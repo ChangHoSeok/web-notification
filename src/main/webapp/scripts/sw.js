@@ -21,26 +21,64 @@
 
 'use strict';
 
+importScripts('/webjars/json2/20140204/json2.min.js');
+
+let notiData = {};
+
 self.addEventListener('push', function(event) {
-	console.log('[Service Worker] Push Received.');
-	console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
-  
-	const title = 'Push Codelab';
+	let title = 'Push Title';
 	const options = {
 		body: 'Yay it works.',
 		icon: '/images/icon.png',
 		badge: '/images/badge.png'
 	};
+	
+	if (event.data) {
+		try {
+			notiData = JSON.parse(event.data.text());
+			
+			if (notiData.title !== '') {
+				title = notiData.title;
+			}
+			
+			if (notiData.message !== '') {
+				options.body = notiData.message;
+			}
 
-	event.waitUntil(self.registration.showNotification(title, options));
+			if (notiData.icon !== '') {
+				options.icon = notiData.icon;
+			}
+			
+			if (notiData.badge !== '') {
+				options.badge = notiData.badge;
+			}
+			
+			event.waitUntil(self.registration.showNotification(title, options));
+		} catch (error) {
+			console.info(error);
+		}
+	}
 });
 
 self.addEventListener('notificationclick', function(event) {
-	console.log('[Service Worker] Notification click Received.');
-	
 	event.notification.close();
 	
-	event.waitUntil(
-		clients.openWindow('https://developers.google.com/web/')
-	);
+	if (notiData.link && notiData.link !== '') {
+		event.waitUntil(
+			clients.matchAll({type: 'window'}).then(windowClients => {
+	            // Check if there is already a window/tab open with the target URL
+	            for (let i = 0; i < windowClients.length; i++) {
+	                let client = windowClients[i];
+	                if (client.url === notiData.link && 'focus' in client) {
+	                    return client.focus();
+	                }
+	            }
+	            
+	            // If not, then open the target URL in a new window/tab.
+	            if (clients.openWindow) {
+	                return clients.openWindow(notiData.link);
+	            }
+	        })
+		);
+	}
 });
